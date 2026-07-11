@@ -2471,19 +2471,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jhose\\.nuget\\packages\\": {}
+    "C:\\Users\\HP\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jhose\\Projects\\ExamenUNIDAD2PARADIGMAS-main\\ExamenUNIDAD2PARADIGMAS\\ExamenAPI.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\Examenes\\paradigmas\\Examen2\\ExamenUNIDAD2PARADIGMAS\\ExamenAPI.csproj",
       "projectName": "ExamenAPI",
-      "projectPath": "C:\\Users\\jhose\\Projects\\ExamenUNIDAD2PARADIGMAS-main\\ExamenUNIDAD2PARADIGMAS\\ExamenAPI.csproj",
-      "packagesPath": "C:\\Users\\jhose\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jhose\\Projects\\ExamenUNIDAD2PARADIGMAS-main\\ExamenUNIDAD2PARADIGMAS\\obj\\",
+      "projectPath": "C:\\Users\\HP\\Examenes\\paradigmas\\Examen2\\ExamenUNIDAD2PARADIGMAS\\ExamenAPI.csproj",
+      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\HP\\Examenes\\paradigmas\\Examen2\\ExamenUNIDAD2PARADIGMAS\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\jhose\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -2507,7 +2507,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.200"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net10.0": {
@@ -2547,7 +2547,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -2970,7 +2970,7 @@
       "code": "NU1903",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
+      "message": "El paquete \"Microsoft.OpenApi\" 2.0.0 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
         "net10.0"
@@ -2980,7 +2980,7 @@
       "code": "NU1903",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'SQLitePCLRaw.lib.e_sqlite3' 2.1.11 has a known high severity vulnerability, https://github.com/advisories/GHSA-2m69-gcr7-jv3q",
+      "message": "El paquete \"SQLitePCLRaw.lib.e_sqlite3\" 2.1.11 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-2m69-gcr7-jv3q",
       "libraryId": "SQLitePCLRaw.lib.e_sqlite3",
       "targetGraphs": [
         "net10.0"
