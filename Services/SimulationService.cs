@@ -3,7 +3,9 @@
 using ExamenAPI.Database;
 using ExamenAPI.Entities;
 using ExamenUnidad2Paradigmas.Dtos;
+using ExamenUnidad2Paradigmas.Dtos.Common;
 using Microsoft.EntityFrameworkCore;
+using PersonsApp.Constants;
 
 namespace ExamenAPI.Services;
 
@@ -16,71 +18,187 @@ public class SimulationService : ISimulationService
         _context = context;
     }
 
-    public async Task<IEnumerable<SimulationDto>> GetAllSimulationsAsync()
+    public async Task<ResponseDto<List<SimulationDto>>> GetAllSimulationsAsync()
     {
-        var entities = await _context.Simulations.ToListAsync();
-        return entities.Select(ToDto).ToList();
+        var entities = await _context.Simulations
+            .OrderByDescending(x => x.Id)
+            .ToListAsync();
+
+        return new ResponseDto<List<SimulationDto>>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Status = true,
+            Message = HttpMessageResponse.REGISTERS_FOUND,
+            Data = entities.Select(ToDto).ToList()
+        };
     }
 
-    public async Task<SimulationDto?> GetSimulationByIdAsync(int id)
+    public async Task<ResponseDto<SimulationDto>> GetSimulationByIdAsync(int id)
     {
         var entity = await _context.Simulations.FindAsync(id);
-        return entity is null ? null : ToDto(entity);
+        if (entity is null)
+        {
+            return new ResponseDto<SimulationDto>
+            {
+                StatusCode = HttpStatusCode.NOT_FOUND,
+                Status = false,
+                Message = HttpMessageResponse.REGISTER_NOT_FOUND
+            };
+        }
+
+        return new ResponseDto<SimulationDto>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Status = true,
+            Message = HttpMessageResponse.REGISTER_FOUND,
+            Data = ToDto(entity)
+        };
     }
 
-    public async Task<SimulationDto> CreateSimulationAsync(SimulationCreateDto simulation)
+    public async Task<ResponseDto<SimulationActionResponseDto>> CreateSimulationAsync(SimulationCreateDto simulation)
     {
-        var entity = CreateEntity(simulation);
-        entity.BalanceFinal = CalculateBalanceFinal(entity.DepositoInicial, entity.TasaInteresAnual, entity.PlazoEnAños);
+        var validationMessage = ValidateSimulation(simulation);
+        if (validationMessage is not null)
+        {
+            return new ResponseDto<SimulationActionResponseDto>
+            {
+                StatusCode = HttpStatusCode.BAD_REQUEST,
+                Status = false,
+                Message = validationMessage
+            };
+        }
+
+        var entity = new SimulationEntity
+        {
+            DepositoInicial = simulation.MontoInicial,
+            TasaInteresAnual = simulation.TasaInteresAnual,
+            PlazoEnAños = simulation.PlazoAnios,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        entity.BalanceFinal = CalcularBalanceFinal(entity.DepositoInicial, entity.TasaInteresAnual, entity.PlazoEnAños);
         entity.InteresTotal = entity.BalanceFinal - entity.DepositoInicial;
 
         _context.Simulations.Add(entity);
         await _context.SaveChangesAsync();
 
-        return ToDto(entity);
+        return new ResponseDto<SimulationActionResponseDto>
+        {
+            StatusCode = HttpStatusCode.CREATED,
+            Status = true,
+            Message = HttpMessageResponse.REGISTER_CREATED,
+            Data = new SimulationActionResponseDto { Id = entity.Id }
+        };
     }
 
-    public async Task<SimulationDto?> UpdateSimulationAsync(int id, SimulationCreateDto simulation)
+    public async Task<ResponseDto<SimulationActionResponseDto>> UpdateSimulationAsync(int id, SimulationCreateDto simulation)
     {
+        var validationMessage = ValidateSimulation(simulation);
+        if (validationMessage is not null)
+        {
+            return new ResponseDto<SimulationActionResponseDto>
+            {
+                StatusCode = HttpStatusCode.BAD_REQUEST,
+                Status = false,
+                Message = validationMessage
+            };
+        }
+
         var existing = await _context.Simulations.FindAsync(id);
         if (existing is null)
         {
-            return null;
+            return new ResponseDto<SimulationActionResponseDto>
+            {
+                StatusCode = HttpStatusCode.NOT_FOUND,
+                Status = false,
+                Message = HttpMessageResponse.REGISTER_NOT_FOUND
+            };
         }
 
-        existing.DepositoInicial = ParseDecimal(nameof(simulation.MontonInicial), simulation.MontonInicial);
-        existing.TasaInteresAnual = ParseDecimal(nameof(simulation.TasaInteresAnual), simulation.TasaInteresAnual);
+        existing.DepositoInicial = simulation.MontoInicial;
+        existing.TasaInteresAnual = simulation.TasaInteresAnual;
         existing.PlazoEnAños = simulation.PlazoAnios;
-        existing.BalanceFinal = CalculateBalanceFinal(existing.DepositoInicial, existing.TasaInteresAnual, existing.PlazoEnAños);
+        existing.BalanceFinal = CalcularBalanceFinal(existing.DepositoInicial, existing.TasaInteresAnual, existing.PlazoEnAños);
         existing.InteresTotal = existing.BalanceFinal - existing.DepositoInicial;
 
         await _context.SaveChangesAsync();
-        return ToDto(existing);
+
+        return new ResponseDto<SimulationActionResponseDto>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Status = true,
+            Message = HttpMessageResponse.REGISTER_UPDATED,
+            Data = new SimulationActionResponseDto { Id = existing.Id }
+        };
     }
 
-    public async Task<bool> DeleteSimulationAsync(int id)
+    public async Task<ResponseDto<bool>> DeleteSimulationAsync(int id)
     {
         var existing = await _context.Simulations.FindAsync(id);
         if (existing is null)
         {
-            return false;
+            return new ResponseDto<bool>
+            {
+                StatusCode = HttpStatusCode.NOT_FOUND,
+                Status = false,
+                Message = HttpMessageResponse.REGISTER_NOT_FOUND
+            };
         }
 
         _context.Simulations.Remove(existing);
         await _context.SaveChangesAsync();
-        return true;
+
+        return new ResponseDto<bool>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Status = true,
+            Message = HttpMessageResponse.REGISTER_DELETED,
+            Data = true
+        };
     }
 
-    public async Task<IEnumerable<MonthlyProjectionDto>?> GetMonthlyProjectionsAsync(int id)
+    public async Task<ResponseDto<List<MonthlyProjectionDto>>> GetMonthlyProjectionsAsync(int id)
     {
         var simulation = await _context.Simulations.FindAsync(id);
-        return simulation is null ? null : CalculateMonthlyProjection(simulation.DepositoInicial, simulation.TasaInteresAnual, simulation.PlazoEnAños);
+        if (simulation is null)
+        {
+            return new ResponseDto<List<MonthlyProjectionDto>>
+            {
+                StatusCode = HttpStatusCode.NOT_FOUND,
+                Status = false,
+                Message = HttpMessageResponse.REGISTER_NOT_FOUND
+            };
+        }
+
+        return new ResponseDto<List<MonthlyProjectionDto>>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Status = true,
+            Message = HttpMessageResponse.REGISTER_FOUND,
+            Data = CalcularProyeccionMensual(simulation.DepositoInicial, simulation.TasaInteresAnual, simulation.PlazoEnAños)
+        };
     }
 
-    public async Task<IEnumerable<AnnualProjectionDto>?> GetAnnualProjectionsAsync(int id)
+    public async Task<ResponseDto<List<AnnualProjectionDto>>> GetAnnualProjectionsAsync(int id)
     {
         var simulation = await _context.Simulations.FindAsync(id);
-        return simulation is null ? null : CalculateAnnualProjection(simulation.DepositoInicial, simulation.TasaInteresAnual, simulation.PlazoEnAños);
+        if (simulation is null)
+        {
+            return new ResponseDto<List<AnnualProjectionDto>>
+            {
+                StatusCode = HttpStatusCode.NOT_FOUND,
+                Status = false,
+                Message = HttpMessageResponse.REGISTER_NOT_FOUND
+            };
+        }
+
+        return new ResponseDto<List<AnnualProjectionDto>>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Status = true,
+            Message = HttpMessageResponse.REGISTER_FOUND,
+            Data = CalculateAnnualProjection(simulation.DepositoInicial, simulation.TasaInteresAnual, simulation.PlazoEnAños)
+        };
     }
 
     private static SimulationDto ToDto(SimulationEntity entity)
@@ -93,52 +211,55 @@ public class SimulationService : ISimulationService
             PlazoAnios = entity.PlazoEnAños,
             MontoFinal = (double)entity.BalanceFinal,
             InteresTotal = (double)entity.InteresTotal,
-            FechaCreacion = DateTime.UtcNow
+            FechaCreacion = entity.FechaCreacion
         };
     }
 
-    private static SimulationEntity CreateEntity(SimulationCreateDto simulation)
+    private static string? ValidateSimulation(SimulationCreateDto simulation)
     {
-        return new SimulationEntity
+        if (simulation.MontoInicial <= 0)
         {
-            DepositoInicial = ParseDecimal(nameof(simulation.MontonInicial), simulation.MontonInicial),
-            TasaInteresAnual = ParseDecimal(nameof(simulation.TasaInteresAnual), simulation.TasaInteresAnual),
-            PlazoEnAños = simulation.PlazoAnios
-        };
-    }
-
-    private static decimal ParseDecimal(string fieldName, string value)
-    {
-        if (!decimal.TryParse(value, out var result))
-        {
-            throw new ArgumentException($"El campo '{fieldName}' debe ser un número válido.");
+            return "El monto inicial debe ser mayor que cero.";
         }
 
-        return result;
+        if (simulation.TasaInteresAnual <= 0)
+        {
+            return "La tasa de interés anual debe ser mayor que cero.";
+        }
+
+        if (simulation.PlazoAnios <= 0)
+        {
+            return "El plazo en años debe ser mayor que cero.";
+        }
+
+        return null;
     }
 
-    private static decimal CalculateBalanceFinal(decimal capital, decimal annualRate, int years)
+    private static decimal CalcularBalanceFinal(decimal capital, decimal annualRate, int years)
     {
         var monthlyRate = annualRate / 12m;
         var totalMonths = years * 12;
-        return capital * DecimalPow(1m + monthlyRate, totalMonths);
+        return capital * (decimal)Math.Pow((double)(1m + monthlyRate), totalMonths);
     }
 
-    private static List<MonthlyProjectionDto> CalculateMonthlyProjection(decimal capital, decimal annualRate, int years)
+    private static List<MonthlyProjectionDto> CalcularProyeccionMensual(decimal capital, decimal annualRate, int years)
     {
         var monthlyRate = annualRate / 12m;
         var totalMonths = years * 12;
-        var balance = capital;
+        decimal balance = capital;
         var projections = new List<MonthlyProjectionDto>(totalMonths);
 
         for (var month = 1; month <= totalMonths; month++)
         {
+            var previousBalance = balance;
             balance *= 1m + monthlyRate;
+            var interest = balance - previousBalance;
+
             projections.Add(new MonthlyProjectionDto
             {
                 Mes = month,
                 Balance = (double)balance,
-                Interes = (double)(balance - capital)
+                Interes = (double)interest
             });
         }
 
@@ -148,35 +269,28 @@ public class SimulationService : ISimulationService
     private static List<AnnualProjectionDto> CalculateAnnualProjection(decimal capital, decimal annualRate, int years)
     {
         var monthlyRate = annualRate / 12m;
-        var balance = capital;
+        decimal balance = capital;
         var projections = new List<AnnualProjectionDto>(years);
 
         for (var year = 1; year <= years; year++)
         {
+            var startBalance = balance;
+
             for (var month = 1; month <= 12; month++)
             {
                 balance *= 1m + monthlyRate;
             }
 
+            var interest = balance - startBalance;
+
             projections.Add(new AnnualProjectionDto
             {
                 Anio = year,
                 Balance = (double)balance,
-                Interes = (double)(balance - capital)
+                Interes = (double)interest
             });
         }
 
         return projections;
-    }
-
-    private static decimal DecimalPow(decimal value, int exponent)
-    {
-        var result = 1m;
-        for (var i = 0; i < exponent; i++)
-        {
-            result *= value;
-        }
-
-        return result;
     }
 }

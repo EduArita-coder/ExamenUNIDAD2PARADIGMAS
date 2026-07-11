@@ -2471,19 +2471,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jhose\\.nuget\\packages\\": {}
+    "C:\\Users\\eduar\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jhose\\Projects\\ExamenUNIDAD2PARADIGMAS-main\\ExamenUNIDAD2PARADIGMAS\\ExamenAPI.csproj",
+      "projectUniqueName": "C:\\Users\\eduar\\OneDrive\\Escritorio\\ExamenUnidad2Paradigmas\\ExamenAPI.csproj",
       "projectName": "ExamenAPI",
-      "projectPath": "C:\\Users\\jhose\\Projects\\ExamenUNIDAD2PARADIGMAS-main\\ExamenUNIDAD2PARADIGMAS\\ExamenAPI.csproj",
-      "packagesPath": "C:\\Users\\jhose\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jhose\\Projects\\ExamenUNIDAD2PARADIGMAS-main\\ExamenUNIDAD2PARADIGMAS\\obj\\",
+      "projectPath": "C:\\Users\\eduar\\OneDrive\\Escritorio\\ExamenUnidad2Paradigmas\\ExamenAPI.csproj",
+      "packagesPath": "C:\\Users\\eduar\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\eduar\\OneDrive\\Escritorio\\ExamenUnidad2Paradigmas\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\jhose\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\eduar\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
