@@ -1,16 +1,17 @@
 #nullable enable
 
 using ExamenUnidad2Paradigmas.Dtos;
+using ExamenUnidad2Paradigmas.Dtos.Common;
 
 namespace ExamenAPI.Services;
 
 public interface ISimulationService
 {
-    Task<IEnumerable<SimulationDto>> GetAllSimulationsAsync();
-    Task<SimulationDto?> GetSimulationByIdAsync(int id);
-    Task<SimulationDto> CreateSimulationAsync(SimulationCreateDto simulation);
-    Task<SimulationDto?> UpdateSimulationAsync(int id, SimulationCreateDto simulation);
-    Task<bool> DeleteSimulationAsync(int id);
-    Task<IEnumerable<MonthlyProjectionDto>?> GetMonthlyProjectionsAsync(int id);
-    Task<IEnumerable<AnnualProjectionDto>?> GetAnnualProjectionsAsync(int id);
+    Task<ResponseDto<List<SimulationDto>>> GetAllSimulationsAsync();
+    Task<ResponseDto<SimulationDto>> GetSimulationByIdAsync(int id);
+    Task<ResponseDto<SimulationActionResponseDto>> CreateSimulationAsync(SimulationCreateDto simulation);
+    Task<ResponseDto<SimulationActionResponseDto>> UpdateSimulationAsync(int id, SimulationCreateDto simulation);
+    Task<ResponseDto<bool>> DeleteSimulationAsync(int id);
+    Task<ResponseDto<List<MonthlyProjectionDto>>> GetMonthlyProjectionsAsync(int id);
+    Task<ResponseDto<List<AnnualProjectionDto>>> GetAnnualProjectionsAsync(int id);
 }
