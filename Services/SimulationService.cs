@@ -5,7 +5,8 @@ using ExamenAPI.Entities;
 using ExamenUnidad2Paradigmas.Dtos;
 using ExamenUnidad2Paradigmas.Dtos.Common;
 using Microsoft.EntityFrameworkCore;
-using PersonsApp.Constants;
+using SimulationApp.Constants;
+using ExamenAPI.Mappers;
 
 namespace ExamenAPI.Services;
 
@@ -29,7 +30,7 @@ public class SimulationService : ISimulationService
             StatusCode = HttpStatusCode.OK,
             Status = true,
             Message = HttpMessageResponse.REGISTERS_FOUND,
-            Data = entities.Select(ToDto).ToList()
+            Data = entities.Select(SimulationMapper.ToDto).ToList()
         };
     }
 
@@ -51,7 +52,7 @@ public class SimulationService : ISimulationService
             StatusCode = HttpStatusCode.OK,
             Status = true,
             Message = HttpMessageResponse.REGISTER_FOUND,
-            Data = ToDto(entity)
+            Data = SimulationMapper.ToDto(entity)
         };
     }
 
@@ -68,14 +69,7 @@ public class SimulationService : ISimulationService
             };
         }
 
-        var entity = new SimulationEntity
-        {
-            DepositoInicial = simulation.MontoInicial,
-            TasaInteresAnual = simulation.TasaInteresAnual,
-            PlazoEnAños = simulation.PlazoAnios,
-            FechaCreacion = DateTime.Now
-        };
-
+        var entity = SimulationMapper.ToEntity(simulation);
         entity.BalanceFinal = CalcularBalanceFinal(entity.DepositoInicial, entity.TasaInteresAnual, entity.PlazoEnAños);
         entity.InteresTotal = entity.BalanceFinal - entity.DepositoInicial;
 
@@ -115,9 +109,7 @@ public class SimulationService : ISimulationService
             };
         }
 
-        existing.DepositoInicial = simulation.MontoInicial;
-        existing.TasaInteresAnual = simulation.TasaInteresAnual;
-        existing.PlazoEnAños = simulation.PlazoAnios;
+        SimulationMapper.UpdateEntity(existing, simulation);
         existing.BalanceFinal = CalcularBalanceFinal(existing.DepositoInicial, existing.TasaInteresAnual, existing.PlazoEnAños);
         existing.InteresTotal = existing.BalanceFinal - existing.DepositoInicial;
 
@@ -201,19 +193,6 @@ public class SimulationService : ISimulationService
         };
     }
 
-    private static SimulationDto ToDto(SimulationEntity entity)
-    {
-        return new SimulationDto
-        {
-            Id = entity.Id,
-            MontoInicial = (double)entity.DepositoInicial,
-            TasaInteresAnual = (double)entity.TasaInteresAnual,
-            PlazoAnios = entity.PlazoEnAños,
-            MontoFinal = (double)entity.BalanceFinal,
-            InteresTotal = (double)entity.InteresTotal,
-            FechaCreacion = entity.FechaCreacion
-        };
-    }
 
     private static string? ValidateSimulation(SimulationCreateDto simulation)
     {

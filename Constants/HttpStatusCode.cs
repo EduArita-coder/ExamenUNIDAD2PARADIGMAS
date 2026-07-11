@@ -1,4 +1,4 @@
-namespace PersonsApp.Constants
+namespace SimulationApp.Constants
 {
     public static class HttpStatusCode
     {
