@@ -1,0 +1,30 @@
+info:
+  name: Create
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:5194/api/simulations
+  body:
+    type: json
+    data: |-
+      {
+        "montoInicial": 100,
+        "tasaInteresAnual": 0.05,
+        "plazoAnios": 5
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  ## Validaciones 
+
+  Pais requerido
+
+  FirstName:
