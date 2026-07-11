@@ -22,6 +22,7 @@ public class SimulationDbContext : DbContext
             entity.Property(e => e.PlazoEnAños).IsRequired();
             entity.Property(e => e.BalanceFinal);
             entity.Property(e => e.InteresTotal);
+            entity.Property(e => e.FechaCreacion).IsRequired();
         });
     }
 }
