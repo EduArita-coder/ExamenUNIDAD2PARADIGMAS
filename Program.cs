@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using ExamenAPI.Database;
 using ExamenAPI.Services;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
 
 // Registrar el DbContext con SQLite
 builder.Services.AddDbContext<SimulationDbContext>(options =>
@@ -19,6 +20,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

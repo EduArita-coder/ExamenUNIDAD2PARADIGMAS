@@ -3,6 +3,7 @@ using System;
 using ExamenAPI.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamenAPI.Migrations
 {
     [DbContext(typeof(SimulationDbContext))]
-    partial class SimulationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260711073454_AddFechaCreacion")]
+    partial class AddFechaCreacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
