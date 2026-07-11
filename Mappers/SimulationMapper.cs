@@ -9,10 +9,18 @@ public static class SimulationMapper
     {
         return new SimulationEntity
         {
-            DepositoInicial = decimal.Parse(dto.MontonInicial),
-            TasaInteresAnual = decimal.Parse(dto.TasaInteresAnual),
-            PlazoEnAños = dto.PlazoAnios
+            DepositoInicial = dto.MontoInicial,
+            TasaInteresAnual = dto.TasaInteresAnual,
+            PlazoEnAños = dto.PlazoAnios,
+            FechaCreacion = DateTime.Now
         };
+    }
+
+    public static void UpdateEntity(SimulationEntity entity, SimulationCreateDto dto)
+    {
+        entity.DepositoInicial = dto.MontoInicial;
+        entity.TasaInteresAnual = dto.TasaInteresAnual;
+        entity.PlazoEnAños = dto.PlazoAnios;
     }
 
     public static SimulationDto ToDto(SimulationEntity entity)
@@ -24,7 +32,8 @@ public static class SimulationMapper
             TasaInteresAnual = (double)entity.TasaInteresAnual,
             PlazoAnios = entity.PlazoEnAños,
             MontoFinal = (double)entity.BalanceFinal,
-            InteresTotal = (double)entity.InteresTotal
+            InteresTotal = (double)entity.InteresTotal,
+            FechaCreacion = entity.FechaCreacion
         };
     }
 }

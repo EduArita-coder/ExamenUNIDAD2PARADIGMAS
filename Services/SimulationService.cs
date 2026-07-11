@@ -73,7 +73,7 @@ public class SimulationService : ISimulationService
             DepositoInicial = simulation.MontoInicial,
             TasaInteresAnual = simulation.TasaInteresAnual,
             PlazoEnAños = simulation.PlazoAnios,
-            FechaCreacion = DateTime.UtcNow
+            FechaCreacion = DateTime.Now
         };
 
         entity.BalanceFinal = CalcularBalanceFinal(entity.DepositoInicial, entity.TasaInteresAnual, entity.PlazoEnAños);
