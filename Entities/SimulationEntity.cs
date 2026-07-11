@@ -21,4 +21,6 @@ public class SimulationEntity
     public decimal BalanceFinal { get; set; }
 
     public decimal InteresTotal { get; set; }
+
+    public DateTime FechaCreacion { get; set; }
 }

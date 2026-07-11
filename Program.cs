@@ -5,7 +5,6 @@ using ExamenAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-
 builder.Services.AddControllers();
 
 // Registrar el DbContext con SQLite
@@ -23,7 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.MapControllers();
 
 app.Run();
